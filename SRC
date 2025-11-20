@@ -1,0 +1,67 @@
+import csv
+import statistics
+import matplotlib.pyplot as plt
+
+# Load Data
+def load_marks(file_path):
+    students = []
+    with open(file_path, 'r') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            row['Maths'] = int(row['Maths'])
+            row['Physics'] = int(row['Physics'])
+            row['Chemistry'] = int(row['Chemistry'])
+            students.append(row)
+    return students
+
+# Calculate average marks
+def calculate_average(students):
+    return {
+        "Maths": statistics.mean([s["Maths"] for s in students]),
+        "Physics": statistics.mean([s["Physics"] for s in students]),
+        "Chemistry": statistics.mean([s["Chemistry"] for s in students]),
+    }
+
+# Grade function
+def get_grade(score):
+    if score >= 90: return "A+"
+    elif score >= 80: return "A"
+    elif score >= 70: return "B"
+    elif score >= 60: return "C"
+    elif score >= 50: return "D"
+    else: return "F"
+
+# Display student grades
+def display_grades(students):
+    print("\nStudent Grades:")
+    for s in students:
+        total = (s["Maths"] + s["Physics"] + s["Chemistry"]) / 3
+        print(f"{s['Name']} → {get_grade(total)}")
+
+# Visualization
+def visualize_avg(avg):
+    subjects = list(avg.keys())
+    values = list(avg.values())
+
+    plt.bar(subjects, values, color=['blue', 'green', 'orange'])
+    plt.title("Average Subject Performance")
+    plt.xlabel("Subjects")
+    plt.ylabel("Average Marks")
+    plt.show()
+
+# Main Program
+def main():
+    print("📘 Student Performance Analyzer")
+
+    students = load_marks("../data/marks.csv")
+    avg = calculate_average(students)
+
+    print("\nSubject-wise Average Marks:")
+    for subject, value in avg.items():
+        print(f"{subject}: {value:.2f}")
+
+    display_grades(students)
+    visualize_avg(avg)
+
+if __name__ == "__main__":
+    main()
